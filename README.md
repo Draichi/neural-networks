@@ -1,4 +1,4 @@
-# Tenfor Flow Deep Learning
+# Tensor Flow Deep Learning
 
 ```
 pip3 install tensorflow
