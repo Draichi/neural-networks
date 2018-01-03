@@ -1,4 +1,5 @@
 /tmp
 /.vscode
-sentiment_set.pickle
 /__pycache__
+*.csv
+*.pickle
