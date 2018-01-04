@@ -10,10 +10,10 @@ n_nodes_hl1 = 500
 n_nodes_hl2 = 500
 
 n_classes = 2
-hm_data = 2000000
+hm_data = 200000
 
 batch_size = 32
-hm_epochs = 10
+hm_epochs = 15
 
 x = tf.placeholder('float')
 y = tf.placeholder('float')
@@ -75,5 +75,5 @@ def use_neural_network(input_data):
         elif result[0] == 1:
             print('Negative:',input_data)
 
-use_neural_network("He's an idiot and a jerk.")
+use_neural_network("Dumb idiot and a jerk, motherfucker.")
 use_neural_network("This was the best store i've ever seen.")

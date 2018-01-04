@@ -20,7 +20,7 @@ n_classes = 2
 hm_data = 200000
 
 batch_sizes = 32
-hm_epochs = 10
+hm_epochs = 15
 
 x = tf.placeholder('float')
 y = tf.placeholder('float')
@@ -133,7 +133,7 @@ def train_neural_network(x):
         print('Tested', counter, 'samples.')
         test_x = np.array(feature_sets)
         test_y = np.array(labels)
-        print('Accuracy:', accuracy.eval({x: test_x, y:test_y}))
+        print('Accuracy:', accuracy.eval({x:test_x, y:test_y}))
 #train_neural_network(x)
 
 def test_neural_network():
