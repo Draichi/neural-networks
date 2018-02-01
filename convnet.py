@@ -42,17 +42,11 @@ def convolutional_neural_network(x):
 
 def train_neural_network(x):
     prediction = convolutional_neural_network(x)
-    # OLD VERSION:
-    #cost = tf.reduce_mean( tf.nn.softmax_cross_entropy_with_logits(prediction,y) )
-    # NEW:
     cost = tf.reduce_mean( tf.nn.softmax_cross_entropy_with_logits(logits=prediction, labels=y) )
     optimizer = tf.train.AdamOptimizer().minimize(cost)
     
     hm_epochs = 10
     with tf.Session() as sess:
-        # OLD:
-        #sess.run(tf.initialize_all_variables())
-        # NEW:
         sess.run(tf.global_variables_initializer())
 
         for epoch in range(hm_epochs):
@@ -64,9 +58,15 @@ def train_neural_network(x):
 
             print('Epoch', epoch, 'completed out of',hm_epochs,'loss:',epoch_loss)
 
-        correct = tf.equal(tf.argmax(prediction, 1), tf.argmax(y, 1))
+        correct_prediction = tf.equal(tf.argmax(prediction, 1), tf.argmax(y, 1))
 
-        accuracy = tf.reduce_mean(tf.cast(correct, 'float'))
-        print('Accuracy:',accuracy.eval({x:mnist.test.images, y:mnist.test.labels}))
+        accuracy_sum = tf.reduce_sum(tf.cast(correct_prediction, 'float'))
+        good = 0
+        total = 0
+        for i in range(int(mnist.test.num_examples/batch_size)):
+            testSet = mnist.test.next_batch(batch_size)
+            good += accuracy_sum.eval(feed_dict={x:testSet[0], y:testSet[1], keep_prob:1.0})
+            total += testSet[0].shape[0]
+        print('Test Accuracy %g' %(good/total))
 
 train_neural_network(x)
