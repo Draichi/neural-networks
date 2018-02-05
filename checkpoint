@@ -1,0 +1,2 @@
+model_checkpoint_path: "/home/lucas/Documentos/deep-learning/tflearncnn.model"
+all_model_checkpoint_paths: "/home/lucas/Documentos/deep-learning/tflearncnn.model"

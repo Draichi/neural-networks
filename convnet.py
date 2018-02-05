@@ -27,9 +27,9 @@ def convolutional_neural_network(x):
     # reshaping a 784 pixels image to a 28x28 image
     x = tf.reshape(x, shape=[-1,28,28,1])
 
-    conv1 = tf.nn.relu(conv2d(x, weights['W_conv1']))
+    conv1 = tf.nn.relu(conv2d(x, weights['W_conv1']) + biases['b_conv1'])
     conv1 = maxpool2d(conv1)
-    conv2 = tf.nn.relu(conv2d(conv1, weights['W_conv2']))
+    conv2 = tf.nn.relu(conv2d(conv1, weights['W_conv2']) + biases['b_conv2'])
     conv2 = maxpool2d(conv2)
 
     # fully connected
@@ -45,7 +45,7 @@ def train_neural_network(x):
     cost = tf.reduce_mean( tf.nn.softmax_cross_entropy_with_logits(logits=prediction, labels=y) )
     optimizer = tf.train.AdamOptimizer().minimize(cost)
     
-    hm_epochs = 10
+    hm_epochs = 3
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
 
@@ -60,13 +60,7 @@ def train_neural_network(x):
 
         correct_prediction = tf.equal(tf.argmax(prediction, 1), tf.argmax(y, 1))
 
-        accuracy_sum = tf.reduce_sum(tf.cast(correct_prediction, 'float'))
-        good = 0
-        total = 0
-        for i in range(int(mnist.test.num_examples/batch_size)):
-            testSet = mnist.test.next_batch(batch_size)
-            good += accuracy_sum.eval(feed_dict={x:testSet[0], y:testSet[1], keep_prob:1.0})
-            total += testSet[0].shape[0]
-        print('Test Accuracy %g' %(good/total))
+        accuracy_sum = tf.reduce_mean(tf.cast(correct_prediction, 'float'))
+        print('Accuracy:', accuracy_sum.eval({x: mnist.test.images, y: mnist.test.labels}))
 
 train_neural_network(x)
