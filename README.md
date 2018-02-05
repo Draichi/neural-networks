@@ -3,8 +3,7 @@
 ### [Live demo](https://youtu.be/0EExuBrn2hA)
 
 ```
-pip3 install tensorflow
-pip3 install tflearn
+pip3 install tensorflow tflearn gym numpy
 
 python3 cnn_tflearn.py
 ```
