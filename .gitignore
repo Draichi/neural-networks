@@ -1,6 +1,7 @@
 /tmp
 /.vscode
 /mnist
+/log
 /__pycache__
 *.csv
 *.pickle
