@@ -29,9 +29,15 @@ model.compile(loss="binary_crossentropy", optimizer="adam",
 metrics=['accuracy'])
 
 # call the function to fit to the data (trainning the network)
-model.fit(X, Y, epochs=50, batch_size=10)
+model.fit(X, Y, epochs=150, batch_size=10)
 
 # evaluate the model
 scores = model.evaluate(X, Y)
 print("\n%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
+
+predict = model.predict(numpy.array([[1,89,66,23,94,28.1,0.167,21]]), verbose=1)
+if predict[0] < 0.5:
+  print('olha: {} , nao Tem diabetes!'.format(predict[0]))
+else:
+  print('olha: {} , Tem diabetes!'.format(predict[0]))
 
