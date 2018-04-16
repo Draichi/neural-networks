@@ -1,6 +1,13 @@
 from keras.models import Sequential
 from keras.layers import Dense
 import numpy
+import pickle
+
+
+##### to do ####
+# - model.pickle
+# - iterate trought some prediction data
+
 
 # random seed for reproducibility
 numpy.random.seed(7)
@@ -37,7 +44,7 @@ print("\n%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
 
 predict = model.predict(numpy.array([[1,89,66,23,94,28.1,0.167,21]]), verbose=1)
 if predict[0] < 0.5:
-  print('olha: {} , nao Tem diabetes!'.format(predict[0]))
+  print('Descision: {}, U dont have diabetes :)'.format(predict[0]))
 else:
-  print('olha: {} , Tem diabetes!'.format(predict[0]))
+  print('Descision: {}, U do have diabetes!'.format(predict[0]))
 
