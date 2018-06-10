@@ -1,8 +1,8 @@
 /tmp
 /.vscode
-/mnist
+*.lucas
 /log
 /__pycache__
-*.csv
 *.pickle
-*.npy
+**/**.npy
+/gym

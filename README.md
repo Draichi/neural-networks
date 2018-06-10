@@ -1,17 +1,31 @@
-# Tensor Flow Deep Learning
-```
-pip3 install tensorflow tflearn gym numpy
-```
+# neural networks
 
+## requirements
+- python3
+- gym
+- tflearn
+
+### install tflearn
+http://tflearn.org/installation/
+
+
+### install gym
+
+On Ubuntu 14.04:
+
+    apt-get install -y python-numpy python-dev cmake zlib1g-dev libjpeg-dev xvfb libav-tools xorg-dev python-opengl libboost-all-dev libsdl2-dev swig
+
+    git clone https://github.com/openai/gym.git
+    cd gym
+    pip install -e .
+
+Once you're ready to install everything, run ``pip install -e '.[all]'``
+
+https://github.com/openai/gym/blob/master/README.rst#installing-everything
 ## AI Playing game
 ```
-python3 open_ai.py
+python cartpole.py
 ```
 <img src="ai.gif">
 
-## Convnet w/ TFLearn
-### [Demo](https://youtu.be/0EExuBrn2hA)
-```
-python3 cnn_tflearn.py
-```
 
