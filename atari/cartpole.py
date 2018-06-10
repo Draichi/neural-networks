@@ -53,7 +53,8 @@ def initial_population():
                 training_data.append([data[0], output])
         env.reset()
         scores.append(score)
-    training_data_save = np.array(training_data)
+    # --- trying to pickle    
+    # training_data_save = np.array(training_data)
     # np.save('cartpole_initial_population.npy', training_data_save)
     print('Average accepted score:', mean(accepted_scores))
     print('Median accepted score:', median(accepted_scores))
@@ -132,6 +133,7 @@ def train_model(training_data, model=False):
 
 # traning and running
 training_data = initial_population()
+# --- trying to pickle
 # training_data = np.load('initial_population.npy')
 model = train_model(training_data)
 # 
