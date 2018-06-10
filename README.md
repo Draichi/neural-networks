@@ -10,17 +10,13 @@ http://tflearn.org/installation/
 
 
 ### install gym
+```sh
+apt-get install -y python-numpy python-dev cmake zlib1g-dev libjpeg-dev xvfb libav-tools xorg-dev python-opengl libboost-all-dev libsdl2-dev swig
 
-On Ubuntu 14.04:
-
-    apt-get install -y python-numpy python-dev cmake zlib1g-dev libjpeg-dev xvfb libav-tools xorg-dev python-opengl libboost-all-dev libsdl2-dev swig
-
-    git clone https://github.com/openai/gym.git
-    cd gym
-    pip install -e .
-
-Once you're ready to install everything, run ``pip install -e '.[all]'``
-
+git clone https://github.com/openai/gym.git
+cd gym
+pip install -e '.[all]'
+```
 https://github.com/openai/gym/blob/master/README.rst#installing-everything
 ## AI Playing game
 ```

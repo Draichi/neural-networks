@@ -10,11 +10,11 @@ from collections import Counter
 # disable warnings from tensorflow, default '0'
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
-# learning rate
 LEARNING_RATE = 1e-3
-GOAL_STEPS = 500
+GOAL_STEPS = 800
 SCORE_REQUIREMENT = 50
 INITIAL_GAMES = 10000
+GAMES_TO_OBSERVE = 1
 # ------------------------------------------------------------>
 
 env = gym.make('CartPole-v0')
@@ -54,7 +54,7 @@ def initial_population():
         env.reset()
         scores.append(score)
     training_data_save = np.array(training_data)
-    np.save('initial_population.npy', training_data_save)
+    # np.save('cartpole_initial_population.npy', training_data_save)
     print('Average accepted score:', mean(accepted_scores))
     print('Median accepted score:', median(accepted_scores))
     print(Counter(accepted_scores))
@@ -131,16 +131,16 @@ def train_model(training_data, model=False):
 # ------------------------------------------------------------>
 
 # traning and running
-# training_data = initial_population()
-training_data = np.load('initial_population.npy')
+training_data = initial_population()
+# training_data = np.load('initial_population.npy')
 model = train_model(training_data)
-# PICKLE HERE
+# 
 # ------------------------------------------------------------>
 
 # run the game
 scores = []
 choices = []
-for each_game in range(20):
+for _ in range(GAMES_TO_OBSERVE):
     score = 0
     game_memory = []
     prev_obs = []
@@ -153,7 +153,15 @@ for each_game in range(20):
             # argmax because is 'one hot' array
             # and action needs to be 0 or 1
             # we're gonna to predict our previous observations
-            action = np.argmax(model.predict(prev_obs.reshape(-1,len(prev_obs),1))[0])
+            action = np.argmax(
+                model.predict(
+                    prev_obs.reshape(
+                        -1,
+                        len(prev_obs),
+                        1
+                    )
+                )[0]
+            )
             # ---just to see wat happens---
             # print(model.predict(prev_obs.reshape(-1,len(prev_obs),1)))
         choices.append(action)
