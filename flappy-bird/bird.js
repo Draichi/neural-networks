@@ -1,21 +1,28 @@
-function Bird () {
-  this.y = height/2
-  this.x = 64
-  this.gravity = 1
-  this.velocity = 0
-  this.lift = -10
+// regex to convert es5 functions to es6 classes
+// find: this\.(.*?)\s*=\s*function
+// replace: $1
 
-  this.show = function () {
+class Bird {
+  constructor() {
+    this.y = height/2
+    this.x = 64
+    this.gravity = .6
+    this.velocity = 0
+    this.lift = -7
+    this.brain = new NeuralNetwork()
+  }
+
+  show () {
     fill(255)
     ellipse(this.x, this.y, 25, 25)
   }
 
-  this.up = function () {
+  up () {
     this.velocity =+ this.lift
 
   }
 
-  this.update = function () {
+  update () {
     this.velocity += this.gravity
     this.y += this.velocity
 

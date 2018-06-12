@@ -1,7 +1,7 @@
 var bird
 var pipes = []
 function setup () {
-	createCanvas(400, 500)
+	createCanvas(640, 480)
 	bird = new Bird()
 	pipes.push(new Pipe())
 }
@@ -28,8 +28,6 @@ function draw () {
 	if (frameCount % 123 == 0) {
 		pipes.push(new Pipe())
 	}
-	
-	
 }
 
 function keyPressed () {
