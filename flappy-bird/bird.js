@@ -2,8 +2,18 @@
 // find: this\.(.*?)\s*=\s*function
 // replace: $1
 
+function mutate(x) {
+  if (random(1) < 0.1) {
+    let offset = randomGaussian() * 0.5;
+    let newx = x + offset;
+    return newx;
+  } else {
+    return x;
+  }
+}
+
 class Bird {
-  constructor() {
+  constructor(brain) {
     this.y = height/2
     this.x = 64
     this.gravity = .6
@@ -11,15 +21,24 @@ class Bird {
     this.lift = -7
     this.score = 0
     this.fitness = 0
-    this.brain = new NeuralNetwork(
-      4, // inputs
-      4, // hidden layers
-      1  // output
-    )
+    if (brain) {
+      this.brain = brain.copy()
+      this.brain.mutate(mutate);
+    } else {
+      this.brain = new NeuralNetwork(
+        4, // inputs
+        4, // hidden layers
+        2  // output
+      )
+    }
+  }
+  copy() {
+    return new Bird(this.brain);
   }
 
   show () {
-    fill(255)
+    stroke(255)
+    fill(255, 100)
     ellipse(this.x, this.y, 25, 25)
   }
 
@@ -48,7 +67,7 @@ class Bird {
     inputs[3] = closestPipe.x / width
 
     let output = this.brain.predict(inputs)
-    if (output[0] > 0.5) {
+    if (output[0] > output[1]) {
       this.up()
     }
   }

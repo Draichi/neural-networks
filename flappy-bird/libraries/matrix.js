@@ -71,7 +71,7 @@ class Matrix {
     }
 
     return new Matrix(a.rows, b.cols)
-      .map((e, i, j) => {
+      .map((_, i, j) => {
         // Dot product of values in col
         let sum = 0;
         for (let k = 0; k < a.cols; k++) {
@@ -110,7 +110,7 @@ class Matrix {
   static map(matrix, func) {
     // Apply a function to every element of matrix
     return new Matrix(matrix.rows, matrix.cols)
-      .map((e, i, j) => func(matrix.data[i][j], i, j));
+      .map((_, i, j) => func(matrix.data[i][j], i, j));
   }
 
   print() {
