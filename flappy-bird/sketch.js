@@ -20,6 +20,7 @@ function draw () {
 	counter++
 
 	for (let i=pipes.length-1; i>=0; i--) {
+		pipes[i].show()
 		pipes[i].update()
 
 		for (let j=birds.length-1; j>=0; j--) {
@@ -35,6 +36,7 @@ function draw () {
 	}
 
 	for (let bird of birds) {
+		bird.show()
 		bird.think(pipes)
 		bird.update()
 	}
