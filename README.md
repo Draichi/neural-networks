@@ -1,8 +1,18 @@
 # Neural networks
 
->From randomness to score 162
+### Flappy Bird
+
+Go to `neural-networks/flappy-bird/` and open the `index.html`. or [demo](https://draichi.github.io/ai-flappy-bird/index.html).
+
+### Atari
+
+Go to `neural-networks/atari/` and run the `cartpole.py`.
 
 <img src="ai.gif">
+
+### Templates
+
+Examples os code in `examples` folder
 
 ## Requirements
 
