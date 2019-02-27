@@ -1,3 +1,8 @@
+'''
+Convolutional neural network implemented with plain tensorflow on mnist examples.
+This implementation use early stopping
+'''
+
 import tensorflow as tf
 
 height = 28
@@ -37,3 +42,49 @@ conv2 = tf.layers.conv2d(conv1, filters=conv2_fmaps, kernel_size=conv2_ksize, st
                          padding=conv2_pad, activation=tf.nn.relu, name="conv2")
 
 with tf.name_scope("pool3"):                         
+    pool3 = tf.nn.max_pool(conv2, ksize=[1,2,2,1], strides=[1,2,2,1], padding="VALID")
+    pool3_flat = tf.reshape(pool3, shape=[-1, pool3_fmaps*14*14])
+    pool3_flat_drop = tf.layers.dropout(pool3_flat, conv2_dropout_rate, training=training)
+
+with tf.name_scope("fc1"):
+    fc1 = tf.layers.dense(pool3_flat_drop, n_fc1, activation=tf.nn.relu, name="fc1")
+    fc1_drop = tf.layers.dropout(fc1, fc1_dropout_rate, training=training)
+
+with tf.name_scope("output"):
+    logits = tf.layers.dense(fc1, n_outputs, name="output")
+    Y_proba = tf.nn.softmax(logits, name="Y_proba")
+
+with tf.name_scope("train"):
+    xentropy = tf.nn.sparse_softmax_cross_entropy_with_logits(logits=logits, labels=y)
+    loss = tf.reduce_mean(xentropy)
+    optimizer = tf.train.AdamOptimizer()
+    training_op = optimizer.minimize(loss)
+
+with tf.name_scope("eval"):
+    correct = tf.nn.in_top_k(logits, y, 1)
+    accuracy = tf.reduce_mean(tf.cast(correct, tf.float32))
+
+with tf.name_scope("init_and_save"):
+    init = tf.global_variables_initializer()
+    saver = tf.train.Saver()
+
+def get_model_params():
+    """
+    Gets the model's state (i.e., the value of all the variables)
+    """
+    gvars = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES)
+    return {gvar.op.name: value for gvar, value in zip(gvars, tf.get_default_session().run(gvars))}
+
+def restore_model_params(model_params):    
+    """
+    Restores a previous state.
+    This is used to speed up early stopping: instead of storing the best
+    model found so far to disk, we just save it to memory.
+    At the end of training, we roll back to the best model found.
+        :param model_params: 
+    """
+    gvar_names = list(model_params.keys())
+    assign_ops = { gvar_name: tf.get_default_graph().get_operation_by_name(gvar_name + "/Assign") for gvar_name in gvar_names}
+    init_values = { gvar_name: assign_op.inputs[1] for gvar_name, assign_op in assign_ops.items() }
+    feed_dict = { init_values[gvar_name]: model_params[gvar_name] for gvar_name in gvar_names }
+    tf.get_default_session().run(assign_ops, feed_dict=feed_dict)
