@@ -1,3 +1,14 @@
+'''
+Policy gradient
+
+Each training iteration starts by running the policy for n_games_per_update (with maximum n_max_steps
+per episode, to avoide running forever). At each step, we also compute the gradients. After n_games_per_update
+have been run, we compute the action socres using the discount_and_normalize_rewards() function; we go through each
+trainable variable, across all episodes and all steps, to multiply each gradient vector by its corresponding
+action score; and we compute the mean of the resulting gradients. Finally, we run the training operation,
+feeding it these mean gradients (one per trainable variable. We also save the model every save_iterations times.
+'''
+
 import tensorflow as tf
 import numpy as np
 import gym
