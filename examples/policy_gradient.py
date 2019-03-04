@@ -1,10 +1,18 @@
 import tensorflow as tf
 import numpy as np
+import gym
 
+# neural net params
 n_inputs = 4
 n_hidden = 4
 n_outputs = 1
 learning_rate = 0.01
+# policy params
+n_iterations = 250
+n_max_steps = 1000
+n_games_per_update = 10 # train the policy every 'x' episodes
+save_iterations = 10 # save the model every 'x' iterations
+discount_rate = 0.99
 
 def discount_rewards(rewards, discount_rate):
     '''
@@ -29,7 +37,9 @@ def discount_and_normalize_rewards(all_rewards, discount_rate):
     return [(discounted_rewards - reward_mean) / reward_std
             for discounted_rewards in all_discounted_rewards]
 
+# start construction phase
 initializer = tf.variance_scaling_initializer()
+env = gym.make("Cartpole-v0")
 
 X = tf.placeholder(tf.float32, shape=[None, n_inputs])
 hidden = tf.layers.dense(X, n_hidden, activation=tf.nn.elu, kernel_initializer=initializer)
@@ -57,4 +67,43 @@ for grad, variable in grads_and_vars:
 training_op = optimizer.apply_gradients(grads_and_vars_feed)
 init = tf.global_variables_initializer()
 saver = tf.train.Saver()
+# end construction phase
 
+# start execution phase
+with tf.Session() as sess:
+    init.run()
+    for iteration in range(n_iterations):
+        all_rewards = []
+        all_gradients = []
+        for game in range(n_games_per_update):
+            current_rewards = []
+            current_gradients = []
+            obs = env.reset()
+            for step in range(n_max_steps):
+                action_val, gradient_val = sess.run(
+                    [action, gradients],
+                    feed_dict={X: obs.reshape(1, n_inputs)}) # one obs
+                obs, reward, done, info = env.step(action_val[0][0])
+                current_rewards.append(reward)
+                current_gradients.append(gradient_val)
+                if done:
+                    break
+            all_rewards.append(current_rewards)
+            all_gradients.append(current_gradients)
+        # At this point we have run the policy for n_games_per_update, 
+        # and we are ready for a policy update
+        all_rewards = discount_and_normalize_rewards(all_rewards, discount_rate)
+        feed_dict = {}
+        for var_index, grad_placeholder in enumerate(gradient_placeholders):
+            # multiply the gradient by the action scores, and compute the mean
+            mean_gradients = np.mean(
+                [reward * all_gradients[game_index][step][var_index]
+                    for game_index, rewards in enumerate(all_rewards)
+                    for step, reward in enumerate(rewards)],
+                axis=0)
+            feed_dict[grad_placeholder] = mean_gradients
+        sess.run(training_op, feed_dict=feed_dict)
+        if iteration % save_iterations == 0:
+            saver.save(sess, "./policy_gradient.ckpt")
+
+# end execution phase
