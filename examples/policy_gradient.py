@@ -50,7 +50,7 @@ def discount_and_normalize_rewards(all_rewards, discount_rate):
 
 # start construction phase
 initializer = tf.variance_scaling_initializer()
-env = gym.make("Cartpole-v0")
+env = gym.make("CartPole-v0")
 
 X = tf.placeholder(tf.float32, shape=[None, n_inputs])
 hidden = tf.layers.dense(X, n_hidden, activation=tf.nn.elu, kernel_initializer=initializer)

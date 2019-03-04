@@ -6,3 +6,5 @@ atari/log
 **/**.npy
 /gym
 /.vscode
+*.ckpt.*
+checkpoint
