@@ -1,5 +1,0 @@
-tflearn
-keras
-pickle
-numpy
-gym-super-mario-bros
