@@ -22,7 +22,7 @@ import gym
 import os
 from collections import deque
 
-env = gym.make("Mspacman-v0")
+env = gym.make("MsPacman-v0")
 input_height = 88
 input_width = 80
 input_channels = 1
@@ -33,6 +33,7 @@ conv_paddings = ["SAME"] * 3
 conv_activations = [tf.nn.relu] * 3
 n_hidden_in = 64 * 11 * 10 # conv3 has 64 maps of 11x10 each
 n_hidden = 512
+learning_rate = 0.01
 hidden_activation = tf.nn.relu
 replay_memory_size = 10000
 replay_memory = deque([], maxlen=replay_memory_size)
@@ -84,7 +85,7 @@ def q_network(X_state, name):
         for n_maps, kernel_size, stride, padding, activation in zip(
                 conv_n_maps, conv_kernel_sizes, conv_strides, conv_paddings, conv_activations):
             prev_layer = tf.layers.conv2d(
-                prev_layer, filters=n_maps, kernel_size=kernel_size, stride=stride,
+                prev_layer, filters=n_maps, kernel_size=kernel_size, strides=stride,
                 padding=padding, activation=activation, kernel_initializer=initializer)
             conv_layers.append(prev_layer)
         last_conv_layer_flat = tf.reshape(prev_layer, shape=[-1, n_hidden_in])
@@ -119,7 +120,7 @@ def epsilon_greedy(q_values, step):
 X_state = tf.placeholder(tf.float32, shape=[None, input_height, input_width, input_channels])
 actor_q_values, actor_vars = q_network(X_state, name="q_network/actor")
 critic_q_values, critic_vars = q_network(X_state, name="q_network/critic")
-copy_ops = [ actor_var.assign(critic_vars[var_name]) for var_name, actor in actor_vars.items() ]
+copy_ops = [ actor_var.assign(critic_vars[var_name]) for var_name, actor_var in actor_vars.items() ]
 copy_critic_to_actor = tf.group(*copy_ops) # tf.group to group all the assignment operations into a single convenient operation
 
 # critic DQN operations:
@@ -173,8 +174,8 @@ with tf.Session() as sess:
         
         # critic learns
         X_state_val, X_action_val, rewards, X_next_state_val, continues = (sample_memories(batch_size))
-        next_q_values = actor_q_values.eval(feed_dict:{X_state: X_next_state_val})
-        max_next_q_values = np.max(next_q_values, axis=1 keepdims=True)
+        next_q_values = actor_q_values.eval(feed_dict={X_state: X_next_state_val})
+        max_next_q_values = np.max(next_q_values, axis=1, keepdims=True)
         y_val = rewards + continues * discount_rate * max_next_q_values
         training_op.run(feed_dict={X_state: X_state_val, X_action: X_action_val, y: y_val})
         # regularly copy critic to actor
