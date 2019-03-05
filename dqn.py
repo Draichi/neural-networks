@@ -152,3 +152,34 @@ with tf.Session() as sess:
         step = global_step.eval()
         if step >= n_steps:
             break
+        iteration += 1
+        if done:
+            obs = env.reset()
+            for skip in range(skip_start):
+                obs, reward, done, info = env.step(0)
+            state = preprocess_observations(obs)
+        # actor evaluates what to do
+        q_values = actor_q_values.eval(feed_dict={X_state: [state]})
+        action = epsilon_greedy(q_values, step)
+        # actor plays
+        obs, reward, done, info = env.step(action)
+        next_state = preprocess_observations(obs)
+        # memorize
+        replay_memory.append((state, action, reward, next_state, 1.0 - done))
+        state = next_state
+
+        if iteration < training_start or iteration % training_interval != 0:
+            continue
+        
+        # critic learns
+        X_state_val, X_action_val, rewards, X_next_state_val, continues = (sample_memories(batch_size))
+        next_q_values = actor_q_values.eval(feed_dict:{X_state: X_next_state_val})
+        max_next_q_values = np.max(next_q_values, axis=1 keepdims=True)
+        y_val = rewards + continues * discount_rate * max_next_q_values
+        training_op.run(feed_dict={X_state: X_state_val, X_action: X_action_val, y: y_val})
+        # regularly copy critic to actor
+        if step % copy_steps == 0:
+            copy_critic_to_actor.run()
+        # save regularly
+        if step % save_steps == 0:
+            saver.save(sess, checkpoint_path)
