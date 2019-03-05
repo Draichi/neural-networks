@@ -1,5 +1,7 @@
 # Neural networks
 
+Each file is a individual implementations of a machine learning algorithm.
+
 ### Flappy Bird
 
 Open `/flappy-bird/index.html`. or see the live [demo](https://draichi.github.io/ai-flappy-bird/index.html).
