@@ -128,7 +128,7 @@ if __name__ == '__main__':
     parser.add_argument(
         '--save_dir',
         type=str,
-        default='./models/',
+        default='./models',
         help='Directory for storing models')
     parser.add_argument(
         '--log_dir',
